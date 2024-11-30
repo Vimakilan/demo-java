@@ -1,17 +1,12 @@
-FROM tomcat:8.5
-MAINTAINER Tung Nguyen <tongueroo@gmail.com>
+# Use an official Tomcat runtime as a base image
+FROM tomcat:9-jre11
 
-# Debugging tools: A few ways to handle debugging tools.
-# Trade off is a slightly more complex volume mount vs keeping the image size down.
-RUN apt-get update && \
-  apt-get install -y \
-    net-tools \
-    tree \
-    vim && \
-  rm -rf /var/lib/apt/lists/* && apt-get clean && apt-get purge
+# Copy the WAR file into the webapps directory
+COPY target/demo.war /usr/local/tomcat/webapps/
 
-RUN echo "export JAVA_OPTS=\"-Dapp.env=staging\"" > /usr/local/tomcat/bin/setenv.sh
-COPY pkg/demo.war /usr/local/tomcat/webapps/demo.war
-
+# Expose the default Tomcat port (8080)
 EXPOSE 8080
+
+# Command to run Tomcat
 CMD ["catalina.sh", "run"]
+
